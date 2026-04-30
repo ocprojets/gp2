@@ -1,10 +1,13 @@
-# Coffre fort
-## Projet OC informatique 2026
-### Thomas Monnin et Anna Caraulea
+#                                        Coffre fort
+#                                Projet OC informatique 2026
+#                               Thomas Monnin et Anna Caraulean
 
-
-![Afficher-un-mot](https://github.com/ocprojets/gp2/blob/main/download.jpg?raw=true)
-
-![Afficher-un-mot](https://github.com/ocprojets/gp2/blob/main/1517459126428.jpg?raw=true)
-
-![Afficher-un-mot](https://github.com/ocprojets/gp2/blob/main/pngtree-a-capybara-wearing-sunglasses-sitting-on-an-inflatable-donut-with-cocktail-image_17446854.webp?raw=true)
+## Table des matières:
+##*Documentation technique*
+##- Schéma de câble
+##- Liste des composants
+##- Explication du code
+##*Explication du nouveau composant*
+##- Fonctionnement
+##- Rôle dans le projet
+##- Source citée
