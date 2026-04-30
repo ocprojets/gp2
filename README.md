@@ -1,5 +1,7 @@
-# L'escape game de bz !
-### GAY
+# Coffre fort
+## Projet OC informatique 2026
+### Thomas Monnin et Anna Caraulea
+
 
 ![Afficher-un-mot](https://github.com/ocprojets/gp2/blob/main/download.jpg?raw=true)
 
