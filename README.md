@@ -1,6 +1,6 @@
 #                                        Coffre fort
-#                                Projet OC informatique 2026
-#                               Thomas Monin et Anna Caraulean
+                                 Projet OC informatique 2026
+                                Thomas Monin et Anna Caraulean
 
 ## Table des matières:
 *Documentation technique*
