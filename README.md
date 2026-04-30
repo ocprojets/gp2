@@ -7,6 +7,7 @@
 - Schéma de câble
 - Liste des composants
 - Explication du code
+
 *Explication du nouveau composant*
 - Fonctionnement
 - Rôle dans le projet
