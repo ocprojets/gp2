@@ -23,8 +23,6 @@
 
 ### Schéma de câblage
 
-![Schéma de câblage](assets/schema_cables.png)
-
 > ⚠️ *Schéma non contractuel pour raison de clarté : certains câbles ne sont pas représentés et la position de certains composants peut différer du montage réel.*
 
 > 💡 Il n'y a pas de buzzer similaire au nôtre dans le logiciel. Le nôtre possède 3 pins et le pin d'input est relié au GPIO9.
@@ -125,3 +123,4 @@ C'est l'interface visuelle principale qui guide l'utilisateur :
 - IDUINO. (s. d.). *Passive Buzzer (SE044)* [Fiche technique]. OpenPlatform. http://www.openplatform.cc
 - SIMAC Electronics GmbH. (2022, 7 mars). *16x2 LCD Module (COM-LCD16x2)* [Fiche technique]. Joy-IT. https://joy-it.net
 - SIMAC Electronics GmbH. (2022, 7 mars). *16x2 LCD Modul* [Manuel d'utilisation]. Joy-IT. https://joy-it.net
+
