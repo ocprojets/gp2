@@ -22,7 +22,7 @@
 
 ### Schéma de câblage
 
-![schéma cabâge](assets/shema info.png)
+![schéma cabâge](assets/Shema info.png)
 
 > ⚠️ *Schéma non contractuel pour raison de clarté : certains câbles ne sont pas représentés et la position de certains composants peut différer du montage réel.*
 
