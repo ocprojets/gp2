@@ -424,11 +424,11 @@ L'écran est l'**interface visuelle principale** du coffre :
 
 ## Sources
 
-- IDUINO. (s. d.). *Passive Buzzer SE044* [Fiche technique]. OpenPlatform. http://www.openplatform.cc
-- SIMAC Electronics GmbH. (2022, 7 mars). *16x2 LCD Module COM-LCD16X2* [Fiche technique]. Joy-IT. https://joy-it.net
-- SIMAC Electronics GmbH. (2022, 7 mars). *16x2 LCD Modul* [Manuel d'utilisation]. Joy-IT. https://joy-it.net
-- Piher Sensors & Controls. (s. d.). *PT15LV Carbon Potentiometer* [Fiche technique]. Meggitt. https://www.piher.net
-- Raspberry Pi Ltd. (2023). *Raspberry Pi Pico Datasheet*. https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf
+- IDUINO. (s. d.). *Passive Buzzer SE044* [Fiche technique]. OpenPlatform. <http://www.openplatform.cc>
+- SIMAC Electronics GmbH. (2022, 7 mars). *16x2 LCD Module COM-LCD16X2* [Fiche technique]. Joy-IT. <https://joy-it.net>
+- SIMAC Electronics GmbH. (2022, 7 mars). *16x2 LCD Modul* [Manuel d'utilisation]. Joy-IT. <https://joy-it.net>
+- Piher Sensors & Controls. (s. d.). *PT15LV Carbon Potentiometer* [Fiche technique]. Meggitt. <https://www.piher.net>
+- Raspberry Pi Ltd. (2023). *Raspberry Pi Pico Datasheet*. <https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf>
 
 ---
 
