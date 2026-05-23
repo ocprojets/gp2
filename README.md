@@ -92,8 +92,8 @@ from machine import Pin, ADC, PWM
 import utime
 import time
 
-###LCD
-####broches écran LCD
+#LCD
+#broches écran LCD
 rs = Pin(10, Pin.OUT)
 e = Pin(11, Pin.OUT)
 d4 = Pin(12, Pin.OUT)
@@ -101,12 +101,12 @@ d5 = Pin(13, Pin.OUT)
 d6 = Pin(14, Pin.OUT)
 d7 = Pin(15, Pin.OUT)
 
-####signal de validation LCD
+#signal de validation LCD
 def pulse_enable():
     e.value(1); utime.sleep_us(1)
     e.value(0); utime.sleep_us(100)
 
-####envoi des données par blocs de 4 bits
+#envoi des données par blocs de 4 bits
 def send_nibble(data):
     d4.value((data>>0)&1)
     d5.value((data>>1)&1)
@@ -114,23 +114,23 @@ def send_nibble(data):
     d7.value((data>>3)&1)
     pulse_enable()
 
-####envoi d'une commande ou d'un caractère
+#envoi d'une commande ou d'un caractère
 def send_byte(data, mode):
     rs.value(mode)
     send_nibble(data>>4)
     send_nibble(data & 0x0F)
 
-####commande LCD
+#commande LCD
 def lcd_command(cmd):
     send_byte(cmd,0)
     utime.sleep_ms(2)
 
-####écriture LCD
+#écriture LCD
 def lcd_data(data):
     send_byte(data,1)
     utime.sleep_ms(2)
 
-####initialisation LCD
+#initialisation LCD
 def lcd_init():
     utime.sleep_ms(20)
     send_nibble(0x03); utime.sleep_ms(5)
@@ -142,18 +142,18 @@ def lcd_init():
     lcd_command(0x06)
     lcd_command(0x01)
 
-####affichage texte LCD
+#affichage texte LCD
 def lcd_print(txt):
     for c in txt:
         lcd_data(ord(c))
 
-####effacer écran LCD
+#effacer écran LCD
 def lcd_clear():
     lcd_command(0x01)
 
-###COMPOSANTS
+#COMPOSANTS
 
-####leds vertes et rouges
+#leds vertes et rouges
 led_v1 = Pin(7, Pin.OUT)
 led_r1 = Pin(6, Pin.OUT)
 
@@ -163,89 +163,89 @@ led_r2 = Pin(17, Pin.OUT)
 led_v3 = Pin(20, Pin.OUT)
 led_r3 = Pin(19, Pin.OUT)
 
-####potentiomètres
+#potentiomètres
 pot1 = ADC(26)
 pot2 = ADC(27)
 pot3 = ADC(28)
 
-####bouton
+#bouton
 bouton = Pin(8, Pin.IN, Pin.PULL_UP)
 
-####buzzer
+#buzzer
 buzzer = PWM(Pin(9))
 
-###VARIABLES
+#VARIABLES
 
-####code à trouver
+#code à trouver
 combinaison = [1,2,2]
 
-####nombre d'essais ratés
+#nombre d'essais ratés
 tentatives = 0
 
-####dernières valeurs affichées
+#dernières valeurs affichées
 last_vals = [0,0,0]
 
-###FONCTIONS
+#FONCTIONS
 
-####buzzer
+#buzzer
 def beep(f,d):
     buzzer.freq(f)
     buzzer.duty_u16(30000)
     time.sleep(d)
     buzzer.duty_u16(0)
 
-####lecture potentiomètre
-####convertit la position en valeur 1 2 ou 3
+#lecture potentiomètre
+#convertit la position en valeur 1 2 ou 3
 def lire_pot(p):
     v = p.read_u16()
     if v < 21845: return 1
     elif v < 43690: return 2
     else: return 3
 
-####éteindre toutes les leds
+#éteindre toutes les leds
 def reset_leds():
     for led in [led_v1,led_r1,led_v2,led_r2,led_v3,led_r3]:
         led.value(0)
 
-####démarrage LCD
+#démarrage LCD
 lcd_init()
 lcd_clear()
 
-###CONSIGNE
+#CONSIGNE
 print("But du jeu : trouver la bonne combinaison de 3 chiffres en tournant les potentiomètres. Appuyez brievement sur le bouton pour valider le code ou maintenez-le plus d'une seconde pour enregistrer un nouveau code.")
 
-###BOUCLE PRINCIPALE
+#BOUCLE PRINCIPALE
 while True:
 
-####lecture des 3 potentiomètres
+#lecture des 3 potentiomètres
     vals = [lire_pot(pot1), lire_pot(pot2), lire_pot(pot3)]
 
-###AFFICHAGE LIVE
-####met à jour l'écran seulement si une valeur change
+#AFFICHAGE LIVE
+#met à jour l'écran seulement si une valeur change
     for i in range(3):
         if vals[i] != last_vals[i]:
             lcd_clear()
             lcd_print("Chiffre "+str(i+1)+"="+str(vals[i]))
             last_vals = vals[:]
 
-###BOUTON
+#BOUTON
     if bouton.value() == 0:
 
-####mesure du temps d'appui
+#mesure du temps d'appui
         t0 = time.ticks_ms()
         while bouton.value() == 0:
             time.sleep(0.05)
 
         duree = time.ticks_diff(time.ticks_ms(), t0)
 
-###RESET
-####appui long pour enregistrer un nouveau code
+#RESET
+#appui long pour enregistrer un nouveau code
         if duree >= 1000:
 
             combinaison = vals[:]
             tentatives = 0
 
-####animation leds et buzzer
+#animation leds et buzzer
             for i in range(5):
 
                 led_v1.value(1); led_r1.value(1)
@@ -260,7 +260,7 @@ while True:
 
                 time.sleep(0.1)
 
-####affichage du nouveau code
+#affichage du nouveau code
             lcd_clear()
             lcd_print("Nouveau code:")
             lcd_command(0xC0)
@@ -268,25 +268,25 @@ while True:
             code_str = str(combinaison[0]) + "-" + str(combinaison[1]) + "-" + str(combinaison[2])
             lcd_print(code_str[:16])
 
-###VALIDATION
-####appui court pour tester le code
+#VALIDATION
+#appui court pour tester le code
         else:
 
             reset_leds()
             correct = True
 
-####listes des leds vertes et rouges
+#listes des leds vertes et rouges
             leds_v = [led_v1,led_v2,led_v3]
             leds_r = [led_r1,led_r2,led_r3]
 
-####affichage du code testé
+#affichage du code testé
             lcd_clear()
             lcd_print("Code:")
             lcd_command(0xC0)
 
             affichage = ""
 
-####vérification des 3 chiffres
+#vérification des 3 chiffres
             for i in range(3):
 
                 affichage += str(vals[i])
@@ -296,12 +296,12 @@ while True:
                 lcd_command(0xC0)
                 lcd_print(affichage)
 
-####bonne valeur
+#bonne valeur
                 if vals[i] == combinaison[i]:
                     leds_v[i].value(1)
                     beep(2959, 0.2)  
                 else:
-####mauvaise valeur
+#mauvaise valeur
                     leds_r[i].value(1)
                     beep(369, 0.2)   
                     correct = False
@@ -310,19 +310,19 @@ while True:
 
             lcd_clear()
 
-####code correct
+#code correct
             if correct:
                 lcd_print("Correct !")
                 tentatives = 0
 
-####mélodie victoire
+#mélodie victoire
                 for i in range(5):
                     beep(2959, 0.1)
                     time.sleep(0.1)
                 
             else:
 
-####code faux
+#code faux
                 tentatives += 1
 
                 if tentatives >= 5:
@@ -330,7 +330,7 @@ while True:
                 else:
                     lcd_print("Essaye encore")
 
-####attend que le bouton soit relâché
+#attend que le bouton soit relâché
         while bouton.value() == 0:
             time.sleep(0.05)
 
