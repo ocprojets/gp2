@@ -1,3 +1,9 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="image-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="image-light.png">
+  <img src="image-light.png">
+</picture>
+
 # 🔐 L'Énigme — Coffre-Fort à Combinaison
 
 > **Projet informatique** | Thomas Monin & Anna Caraulean | 2025–26  
