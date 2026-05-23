@@ -13,6 +13,7 @@
    - [Liste des composants](#liste-des-composants)
    - [Explication du code](#explication-du-code)
    - [Trame du projet](#trame-du-projet)
+        - [Visualitsation concrète](#visualisation-concrète)
 3. [Nouveaux composants](#nouveaux-composants)
    - [Buzzer passif SE044](#1-buzzer-passif-se044)
    - [Écran LCD COM-LCD16X2](#2-écran-lcd-com-lcd16x2)
