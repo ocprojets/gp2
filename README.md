@@ -44,7 +44,7 @@
 
 > *Schéma non contractuel pour raisons de clarté : certains câbles ne sont pas représentés et la position de certains composants peut différer du montage réel.*
 
-[](Schéma-câblage.png)
+![Schéma de câblage](./schéma-câblage.png)
 
 #### Correspondance des broches (GPIO → Composant)
 
