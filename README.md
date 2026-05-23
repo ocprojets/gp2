@@ -362,8 +362,6 @@ Le programme possède aussi une fonction de réinitialisation du code. Lorsque l
 Toutes les LEDs clignotent alors ensemble et un son de confirmation est joué plusieurs fois. L’écran affiche ensuite le nouveau code enregistré.
 
 ### Visualisation concrète
-[![Voir la vidéo](./minia.png)](https://youtu.be/-eH46OBOoTo)
-
 <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
   <iframe
     src="https://www.youtube.com/embed/-eH46OBOoTo"
