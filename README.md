@@ -363,6 +363,15 @@ Toutes les LEDs clignotent alors ensemble et un son de confirmation est joué pl
 ### Visualisation concrète
 [![Voir la vidéo](./minia.png)](https://youtu.be/-eH46OBOoTo)
 
+<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+  <iframe
+    src="https://www.youtube.com/embed/-eH46OBOoTo"
+    title="YouTube video player"
+    style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+    allowfullscreen>
+  </iframe>
+</div>
+
 ---
 
 ## Nouveaux composants
