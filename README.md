@@ -378,8 +378,8 @@ Contrairement à un buzzer *actif* (qui émet un son fixe dès qu'il est aliment
 - **Fréquence utilisée :** 300 Hz (grave / erreur) à 1500 Hz (aigu / validation)
 
 ```
-Pico GP9 ──[ Signal PWM ]──► S  [SE044]  + ──► 3V3
-                                          - ──► GND
+Pico GP9 ─ [ Signal PWM ] ──► S [SE044]  + ──► 3V3
+                                         - ──► GND
 ```
 
 #### Rôle dans le projet
@@ -415,10 +415,10 @@ L'écran est l'**interface visuelle principale** du coffre :
 | Moment | Affichage |
 |--------|-----------|
 | En attente | `1 - 2 - 2` (valeurs des potentiomètres) |
-| Vérification réussie | `BRAVO ! Ouvert !` |
-| Vérification échouée | `Reessayez !` |
-| 5 erreurs | `ATTENTION : 5 erreurs !` |
-| Réinitialisation | `Code: X-X-X` |
+| Vérification réussie | `Correct !` |
+| Vérification échouée | `Essaye encore` |
+| 5 erreurs | `T'abuse non` |
+| Réinitialisation | `Nouveau code: X-X-X` |
 
 ---
 
