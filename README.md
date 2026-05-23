@@ -87,7 +87,7 @@ Le système donne un retour visuel (LEDs + écran LCD) et sonore (buzzer) à cha
 ### Explication du code
 
 Le programme est écrit en **MicroPython** pour la Raspberry Pi Pico H.
-
+```python
 from machine import Pin, ADC, PWM
 import utime
 import time
@@ -335,6 +335,7 @@ while True:
             time.sleep(0.05)
 
     time.sleep(0.1)
+```
 
 ---
 
