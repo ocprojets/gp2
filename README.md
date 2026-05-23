@@ -361,7 +361,7 @@ Le programme possède aussi une fonction de réinitialisation du code. Lorsque l
 Toutes les LEDs clignotent alors ensemble et un son de confirmation est joué plusieurs fois. L’écran affiche ensuite le nouveau code enregistré.
 
 ###Visualisation concrète
-<https://youtu.be/-eH46OBOoTo>
+[![Voir la vidéo](./)](https://youtu.be/-eH46OBOoTo)
 
 ---
 
