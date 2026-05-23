@@ -1,7 +1,7 @@
 # 🔐 L'Énigme — Coffre-Fort à Combinaison
 
 > **Projet informatique** | Thomas Monin & Anna Caraulean | 2025–26  
-> Prototype robotique à base de **Raspberry Pi Pico H** — Trouvez la bonne combinaison pour ouvrir le coffre !
+> Prototype robotique à base de Raspberry Pi Pico H — Trouvez la bonne combinaison du coffre !
 
 ---
 
@@ -16,37 +16,38 @@
 3. [Nouveaux composants](#nouveaux-composants)
    - [Buzzer passif SE044](#1-buzzer-passif-se044)
    - [Écran LCD COM-LCD16X2](#2-écran-lcd-com-lcd16x2)
-   - [Potentiomètres Piher PT15LV](#3-potentiomètres-piher-pt15lv)
 4. [Sources](#sources)
 
 ---
 
-## Description du projet
+# Description du projet
 
-**L'Énigme** est un coffre-fort électronique interactif. Le joueur doit régler trois potentiomètres pour reproduire une combinaison secrète à trois chiffres (valeurs possibles : 1, 2 ou 3). Le système donne un retour visuel (LEDs + écran LCD) et sonore (buzzer) à chaque tentative.
+**L'Énigme** est un coffre-fort électronique interactif. Le joueur doit régler trois potentiomètres afin de reproduire une combinaison secrète composée de trois chiffres.
+
+Le système donne un retour visuel (LEDs + écran LCD) et sonore (buzzer) à chaque tentative.
 
 **Combinaison par défaut : `1 – 2 – 2`**
 
-### Fonctionnalités principales
+## Fonctionnalités principales
 
 - 🎛️ Saisie de la combinaison via trois potentiomètres
 - 💡 Retour visuel par LEDs vertes (correct) et rouges (incorrect)
-- 🔊 Retour sonore par buzzer passif (son aigu = correct, grave = erreur)
+- 🔊 Retour sonore par buzzer passif
 - 🖥️ Affichage en temps réel sur écran LCD 16×2
 - ⚠️ Avertissement après 5 erreurs consécutives
-- 🔄 Réinitialisation du code par appui long sur le bouton
+- 🔄 Possibilité de définir une nouvelle combinaison par appui long sur le bouton
 
 ---
 
-## Documentation technique
+# Documentation technique
 
-### Schéma de câblage
+## Schéma de câblage
 
 > *Schéma non contractuel pour raisons de clarté : certains câbles ne sont pas représentés et la position de certains composants peut différer du montage réel.*
 
-![Schéma de câblage](./Schema.png)
+![Schéma de câblage](./Schéma câblage.png)
 
-#### Correspondance des broches (GPIO → Composant)
+### Correspondance des broches (GPIO → Composant)
 
 | GPIO | Composant | Rôle |
 |------|-----------|------|
@@ -54,27 +55,27 @@
 | GP27 (ADC1) | Potentiomètre 2 | Lecture chiffre 2 |
 | GP28 (ADC2) | Potentiomètre 3 | Lecture chiffre 3 |
 | GP9 | Buzzer passif (S) | Signal sonore |
-| GP0 | LED verte 1 | Validation chiffre 1 |
-| GP1 | LED rouge 1 | Erreur chiffre 1 |
-| GP2 | LED verte 2 | Validation chiffre 2 |
-| GP3 | LED rouge 2 | Erreur chiffre 2 |
-| GP4 | LED verte 3 | Validation chiffre 3 |
-| GP5 | LED rouge 3 | Erreur chiffre 3 |
-| GP15 | Bouton poussoir | Validation / Réinitialisation |
-| GP10–GP14 | Écran LCD (D4–D8, RS, E) | Affichage |
-| 3V3 | Buzzer (+), LCD (VDD) | Alimentation 3.3V |
+| GP7 | LED verte 1 | Validation chiffre 1 |
+| GP6 | LED rouge 1 | Erreur chiffre 1 |
+| GP18 | LED verte 2 | Validation chiffre 2 |
+| GP17 | LED rouge 2 | Erreur chiffre 2 |
+| GP20 | LED verte 3 | Validation chiffre 3 |
+| GP19 | LED rouge 3 | Erreur chiffre 3 |
+| GP8 | Bouton poussoir | Validation / Nouveau code |
+| GP10–GP15 | Écran LCD | Affichage |
+| 3V3 | Composants | Alimentation |
 | GND | Tous composants | Masse |
 
 ---
 
-### Liste des composants
+## Liste des composants
 
 | Composant | Référence | Quantité |
 |-----------|-----------|----------|
 | Carte microcontrôleur | Raspberry Pi Pico H | 1× |
-| Écran LCD 16×2 | COM-LCD16X2 | 1× |
+| Écran LCD 16×2 ⭐ *(nouveau)* | COM-LCD16X2 | 1× |
 | Buzzer passif ⭐ *(nouveau)* | SE044 | 1× |
-| Potentiomètre ⭐ *(nouveau)* | Piher PT15LV | 4× (3 utilisés + 1 pour contraste LCD) |
+| Potentiomètre | Piher PT15LV | 4× |
 | LED verte | Kingbright L-53G3C | 3× |
 | LED rouge | Kingbright L-53SRD | 3× |
 | Résistance 220 Ω ¼W | Résistance carbone | 6× |
@@ -83,274 +84,312 @@
 
 ---
 
-### Explication du code
+## Explication du code
 
 Le programme est écrit en **MicroPython** pour la Raspberry Pi Pico H.
 
-#### Structure générale
-
 ```python
-# Initialisation des composants
-# - ADC pour les 3 potentiomètres (GP26, GP27, GP28)
-# - PWM pour le buzzer passif (GP9)
-# - GPIO pour les 6 LEDs (GP0 à GP5)
-# - GPIO pour le bouton (GP15)
-# - Bibliothèque LCD pour l'écran (via GPIO)
+from machine import Pin, ADC, PWM
+import utime
+import time
 
-CODE_SECRET = [1, 2, 2]  # Combinaison par défaut
-erreurs = 0              # Compteur d'erreurs consécutives
-last_vals = [0, 0, 0]    # Dernières valeurs lues
-```
+# =========================
+# INITIALISATION DE L'ECRAN LCD
+# =========================
 
-#### Fonction `lire_pot(adc)` — Lecture d'un potentiomètre
+# Définition des broches utilisées par l'écran LCD
+rs = Pin(10, Pin.OUT)
+e = Pin(11, Pin.OUT)
+d4 = Pin(12, Pin.OUT)
+d5 = Pin(13, Pin.OUT)
+d6 = Pin(14, Pin.OUT)
+d7 = Pin(15, Pin.OUT)
 
-```python
-def lire_pot(adc):
-    """
-    Lit la valeur analogique d'un potentiomètre (0–65535)
-    et la convertit en chiffre discret entre 1 et 3.
-    """
-    val = adc.read_u16()   # Lecture 16 bits (0 à 65535)
-    if val < 21845:
+# Fonction qui active l'écran LCD
+def pulse_enable():
+    e.value(1)
+    utime.sleep_us(1)
+    e.value(0)
+    utime.sleep_us(100)
+
+# Envoie 4 bits de données à l'écran
+def send_nibble(data):
+    d4.value((data>>0)&1)
+    d5.value((data>>1)&1)
+    d6.value((data>>2)&1)
+    d7.value((data>>3)&1)
+    pulse_enable()
+
+# Envoie un octet complet à l'écran
+def send_byte(data, mode):
+    rs.value(mode)
+    send_nibble(data>>4)
+    send_nibble(data & 0x0F)
+
+# Commande LCD
+def lcd_command(cmd):
+    send_byte(cmd,0)
+    utime.sleep_ms(2)
+
+# Affichage LCD
+def lcd_data(data):
+    send_byte(data,1)
+    utime.sleep_ms(2)
+
+# Initialisation de l'écran LCD
+def lcd_init():
+    utime.sleep_ms(20)
+    send_nibble(0x03)
+    utime.sleep_ms(5)
+
+    send_nibble(0x03)
+    utime.sleep_us(100)
+
+    send_nibble(0x03)
+    send_nibble(0x02)
+
+    lcd_command(0x28)
+    lcd_command(0x0C)
+    lcd_command(0x06)
+    lcd_command(0x01)
+
+# Affiche un texte sur l'écran
+def lcd_print(txt):
+    for c in txt:
+        lcd_data(ord(c))
+
+# Efface l'écran
+def lcd_clear():
+    lcd_command(0x01)
+
+# =========================
+# INITIALISATION DES COMPOSANTS
+# =========================
+
+# LEDs
+led_v1 = Pin(7, Pin.OUT)
+led_r1 = Pin(6, Pin.OUT)
+
+led_v2 = Pin(18, Pin.OUT)
+led_r2 = Pin(17, Pin.OUT)
+
+led_v3 = Pin(20, Pin.OUT)
+led_r3 = Pin(19, Pin.OUT)
+
+# Potentiomètres
+pot1 = ADC(26)
+pot2 = ADC(27)
+pot3 = ADC(28)
+
+# Bouton poussoir
+bouton = Pin(8, Pin.IN, Pin.PULL_UP)
+
+# Buzzer passif
+buzzer = PWM(Pin(9))
+
+# =========================
+# VARIABLES PRINCIPALES
+# =========================
+
+# Combinaison secrète par défaut
+combinaison = [1,2,2]
+
+# Nombre d'erreurs
+tentatives = 0
+
+# Dernières valeurs affichées
+last_vals = [0,0,0]
+
+# =========================
+# FONCTIONS PRINCIPALES
+# =========================
+
+# Joue un son avec le buzzer
+def beep(f,d):
+    buzzer.freq(f)
+    buzzer.duty_u16(30000)
+
+    time.sleep(d)
+
+    buzzer.duty_u16(0)
+
+# Lit la valeur d'un potentiomètre
+# et la convertit en chiffre 1, 2 ou 3
+def lire_pot(p):
+
+    v = p.read_u16()
+
+    if v < 21845:
         return 1
-    elif val < 43690:
+
+    elif v < 43690:
         return 2
+
     else:
         return 3
-```
 
-#### Fonction `jouer_son(freq, duree)` — Buzzer passif
+# Éteint toutes les LEDs
+def reset_leds():
 
-```python
-def jouer_son(freq, duree):
-    """
-    Génère un signal PWM à la fréquence donnée (en Hz)
-    pendant 'duree' millisecondes.
-    - Son aigu : freq élevée (ex. 1500 Hz) → validation
-    - Son grave : freq basse (ex. 300 Hz)  → erreur
-    """
-    buzzer.freq(freq)
-    buzzer.duty_u16(32768)  # 50% duty cycle = signal carré
-    sleep_ms(duree)
-    buzzer.duty_u16(0)      # Silence
-```
+    for led in [led_v1,led_r1,led_v2,led_r2,led_v3,led_r3]:
+        led.value(0)
 
-#### Logique principale — Boucle principale
+# =========================
+# INITIALISATION
+# =========================
 
-```python
+lcd_init()
+lcd_clear()
+
+# Affichage de la consigne dans la console
+print("But du jeu : trouver la bonne combinaison.")
+
+# =========================
+# BOUCLE PRINCIPALE
+# =========================
+
 while True:
-    # 1. Lecture en continu des 3 potentiomètres
-    vals = [lire_pot(adc1), lire_pot(adc2), lire_pot(adc3)]
-    
-    # 2. Mise à jour de l'écran si changement détecté
-    if vals != last_vals:
-        lcd.clear()
-        lcd.putstr(f"{vals[0]} - {vals[1]} - {vals[2]}")
-        last_vals = vals.copy()
-    
-    # 3. Détection d'appui bouton
-    if not bouton.value():
-        t_appui = mesurer_duree_appui()
-        
-        if t_appui > 1000:      # Appui long → réinitialisation
-            reinitialiser_code(vals)
-        else:                   # Appui court → vérification
-            verifier_combinaison(vals)
-```
 
-#### Fonction `verifier_combinaison(vals)` — Vérification
+    # Lecture des potentiomètres
+    vals = [lire_pot(pot1), lire_pot(pot2), lire_pot(pot3)]
 
-```python
-def verifier_combinaison(vals):
-    """
-    Compare les 3 valeurs lues avec CODE_SECRET.
-    Pour chaque chiffre :
-      - Correct  → LED verte + son aigu (1500 Hz)
-      - Incorrect → LED rouge + son grave (300 Hz)
-    Si tout correct → message victoire + mélodie de succès
-    Sinon → incrémenter erreurs ; avertir après 5 échecs
-    """
-    global erreurs
-    succes = True
-    
+    # Mise à jour de l'écran si changement
     for i in range(3):
-        if vals[i] == CODE_SECRET[i]:
-            allumer_led(verte[i])
-            jouer_son(1500, 200)
+
+        if vals[i] != last_vals[i]:
+
+            lcd_clear()
+
+            lcd_print("Chiffre "+str(i+1)+"="+str(vals[i]))
+
+            last_vals = vals[:]
+
+    # Détection d'appui bouton
+    if bouton.value() == 0:
+
+        t0 = time.ticks_ms()
+
+        while bouton.value() == 0:
+            time.sleep(0.05)
+
+        duree = time.ticks_diff(time.ticks_ms(), t0)
+
+        # =========================
+        # NOUVEAU CODE
+        # =========================
+
+        if duree >= 1000:
+
+            combinaison = vals[:]
+
+            tentatives = 0
+
+            # Clignotement de confirmation
+            for i in range(5):
+
+                led_v1.value(1)
+                led_r1.value(1)
+
+                led_v2.value(1)
+                led_r2.value(1)
+
+                led_v3.value(1)
+                led_r3.value(1)
+
+                beep(1479, 0.1)
+
+                led_v1.value(0)
+                led_r1.value(0)
+
+                led_v2.value(0)
+                led_r2.value(0)
+
+                led_v3.value(0)
+                led_r3.value(0)
+
+                time.sleep(0.1)
+
+            lcd_clear()
+
+            lcd_print("Nouveau code:")
+
+        # =========================
+        # VERIFICATION CODE
+        # =========================
+
         else:
-            allumer_led(rouge[i])
-            jouer_son(300, 400)
-            succes = False
-    
-    if succes:
-        lcd.putstr("BRAVO ! Ouvert !")
-        melodie_victoire()
-        erreurs = 0
-    else:
-        erreurs += 1
-        lcd.putstr("Reessayez !")
-        if erreurs >= 5:
-            lcd.putstr("ATTENTION : 5 erreurs !")
-```
 
-#### Fonction `reinitialiser_code(vals)` — Appui long
+            reset_leds()
 
-```python
-def reinitialiser_code(vals):
-    """
-    Enregistre les positions actuelles des potentiomètres
-    comme nouveau code secret.
-    Feedback : toutes les LEDs clignotent + son de confirmation.
-    """
-    global CODE_SECRET
-    CODE_SECRET = vals.copy()
-    
-    for _ in range(3):          # 3 clignotements
-        allumer_toutes_leds()
-        jouer_son(800, 150)
-        eteindre_toutes_leds()
-        sleep_ms(100)
-    
-    lcd.putstr(f"Code: {vals[0]}-{vals[1]}-{vals[2]}")
-```
+            correct = True
 
----
+            leds_v = [led_v1,led_v2,led_v3]
+            leds_r = [led_r1,led_r2,led_r3]
 
-### Trame du projet
+            lcd_clear()
 
-```
-Démarrage
-    │
-    ▼
-Initialisation (GPIO, ADC, LCD, Buzzer)
-    │
-    ▼
-┌─────────────────────────────────┐
-│  Boucle principale              │
-│                                 │
-│  1. Lire les 3 potentiomètres   │
-│  2. Afficher sur LCD si changé  │
-│  3. Attendre appui bouton       │
-│         │                       │
-│    ┌────┴────┐                  │
-│  Court     Long                 │
-│  (< 1s)   (> 1s)                │
-│    │         │                  │
-│  Vérifier  Réinitialiser        │
-│  code      le code              │
-│    │                            │
-│  Succès ?                       │
-│  Oui → Victoire 🎉              │
-│  Non → Erreur (max 5)           │
-└─────────────────────────────────┘
-```
+            lcd_print("Code:")
 
----
+            lcd_command(0xC0)
 
-## Nouveaux composants
+            affichage = ""
 
-### 1. Buzzer passif SE044
+            # Vérification des 3 chiffres
+            for i in range(3):
 
-**Référence :** SE044 — IDUINO / OpenPlatform
+                affichage += str(vals[i])
 
-#### Fonctionnement technique
+                if i < 2:
+                    affichage += "-"
 
-Contrairement à un buzzer *actif* (qui émet un son fixe dès qu'il est alimenté), le **buzzer passif SE044** nécessite un signal carré externe pour vibrer et produire du son. C'est le microcontrôleur qui génère ce signal via une sortie PWM.
+                lcd_command(0xC0)
 
-- **3 broches :** `S` (signal PWM), `+` (alimentation 3.3V), `-` (GND)
-- **Broche signal :** reliée au **GPIO9** de la Pico
-- **Principe :** plus le signal change d'état (haut/bas) rapidement → plus le son est **aigu** ; plus il est lent → plus le son est **grave**
-- **Fréquence utilisée :** 300 Hz (grave / erreur) à 1500 Hz (aigu / validation)
+                lcd_print(affichage)
 
-```
-Pico GP9 ──[ Signal PWM ]──► S  [SE044]  + ──► 3V3
-                                          - ──► GND
-```
+                # Bonne valeur
+                if vals[i] == combinaison[i]:
 
-#### Rôle dans le projet
+                    leds_v[i].value(1)
 
-Le buzzer est le **retour sonore** du coffre-fort, permettant au joueur de comprendre le résultat sans regarder l'écran :
+                    beep(2959, 0.2)
 
-| Événement | Son | Fréquence |
-|-----------|-----|-----------|
-| Chiffre correct | Aigu bref | ~1500 Hz |
-| Chiffre incorrect | Grave | ~300 Hz |
-| Code trouvé (victoire) | Mélodie montante | 800–2000 Hz |
-| Réinitialisation code | 3 bips moyens | ~800 Hz |
+                # Mauvaise valeur
+                else:
 
----
+                    leds_r[i].value(1)
 
-### 2. Écran LCD COM-LCD16X2
+                    beep(369, 0.2)
 
-**Référence :** COM-LCD16X2 — Joy-IT / SIMAC Electronics
+                    correct = False
 
-#### Fonctionnement technique
+                time.sleep(0.5)
 
-L'écran est un **afficheur alphanumérique 16 caractères × 2 lignes** basé sur le contrôleur standard **HD44780**, compatible avec de nombreuses bibliothèques MicroPython.
+            lcd_clear()
 
-- **Interface :** 4 bits de données (D4–D7) + RS + E → économise les GPIO
-- **Rétroéclairage :** LED bleue intégrée (contrôlable via broche `A/K`)
-- **Contraste :** réglé par le 4e potentiomètre (diviseur de tension sur `V0`)
-- **Bibliothèque utilisée :** `lcd_api` + driver HD44780 pour MicroPython
+            # Combinaison correcte
+            if correct:
 
-#### Rôle dans le projet
+                lcd_print("Correct !")
 
-L'écran est l'**interface visuelle principale** du coffre :
+                tentatives = 0
 
-| Moment | Affichage |
-|--------|-----------|
-| En attente | `1 - 2 - 2` (valeurs des potentiomètres) |
-| Vérification réussie | `BRAVO ! Ouvert !` |
-| Vérification échouée | `Reessayez !` |
-| 5 erreurs | `ATTENTION : 5 erreurs !` |
-| Réinitialisation | `Code: X-X-X` |
+                for i in range(5):
 
----
+                    beep(2959, 0.1)
 
-### 3. Potentiomètres Piher PT15LV
+                    time.sleep(0.1)
 
-**Référence :** Piher PT15LV — Piher Sensors & Controls / Meggitt
+            # Combinaison incorrecte
+            else:
 
-#### Fonctionnement technique
+                tentatives += 1
 
-Un potentiomètre est une **résistance variable** fonctionnant comme un diviseur de tension. Le curseur tourne sur un angle mécanique d'environ **235°**.
+                if tentatives >= 5:
 
-- **Élément résistif :** piste en carbone
-- **Lecture :** entrées analogiques ADC de la Pico (GP26, GP27, GP28)
-- **Résolution :** 16 bits (0 à 65 535) → converti en 3 zones discrètes (1, 2, 3)
-- **Détection de mouvement :** comparaison avec `last_vals` à chaque cycle
+                    lcd_print("T'abuse non")
 
-```
-           ┌──── Curseur (GP26/27/28) → lecture tension variable
-3V3 ───────┤
-           └──── GND
-```
+                else:
 
-#### Conversion analogique → chiffre discret
+                    lcd_print("Essaye encore")
 
-```
-Valeur ADC :   0 ────── 21845 ────── 43690 ────── 65535
-Chiffre    :      1           2            3
-```
-
-#### Rôle dans le projet
-
-Les potentiomètres sont l'**interface de saisie** du coffre-fort :
-
-- **Chiffre 1, 2, 3 :** chaque potentiomètre contrôle un chiffre du code
-- **Mise à jour temps réel :** tourner un potentiomètre met instantanément à jour l'écran LCD
-- **Programmation :** lors d'un appui long, les positions actuelles deviennent le nouveau code secret
-
----
-
-## Sources
-
-- IDUINO. (s. d.). *Passive Buzzer SE044* [Fiche technique]. OpenPlatform. http://www.openplatform.cc
-- SIMAC Electronics GmbH. (2022, 7 mars). *16x2 LCD Module COM-LCD16X2* [Fiche technique]. Joy-IT. https://joy-it.net
-- SIMAC Electronics GmbH. (2022, 7 mars). *16x2 LCD Modul* [Manuel d'utilisation]. Joy-IT. https://joy-it.net
-- Piher Sensors & Controls. (s. d.). *PT15LV Carbon Potentiometer* [Fiche technique]. Meggitt. https://www.piher.net
-- Raspberry Pi Ltd. (2023). *Raspberry Pi Pico Datasheet*. https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf
-
----
-
-*Projet réalisé dans le cadre du cours d'informatique — Gymnase de Plan-les-Ouates, 2025–26*
+    time.sleep(0.1)
