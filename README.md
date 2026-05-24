@@ -1,11 +1,11 @@
-# 🔐 L'Énigme — Coffre-Fort à Combinaison
+#  L'Énigme — Coffre-Fort à Combinaison
 
 > **Projet informatique** | Thomas Monin & Anna Caraulean | 2025–26  
 > Prototype robotique à base de Raspberry Pi Pico H — Trouvez la bonne combinaison du coffre !
 
 ---
 
-## 📋 Table des matières
+##  Table des matières
 
 1. [Description du projet](#description-du-projet)
 2. [Documentation technique](#documentation-technique)
@@ -31,12 +31,12 @@ Le système donne un retour visuel (LEDs + écran LCD) et sonore (buzzer) à cha
 
 ## Fonctionnalités principales
 
-- 🎛️ Saisie de la combinaison via trois potentiomètres
-- 💡 Retour visuel par LEDs vertes (correct) et rouges (incorrect)
-- 🔊 Retour sonore par buzzer passif
-- 🖥️ Affichage en temps réel sur écran LCD 16×2
-- ⚠️ Avertissement après 5 erreurs consécutives
-- 🔄 Possibilité de définir une nouvelle combinaison par appui long sur le bouton
+-  Saisie de la combinaison via trois potentiomètres
+-  Retour visuel par LEDs vertes (correct) et rouges (incorrect)
+-  Retour sonore par buzzer passif
+-  Affichage en temps réel sur écran LCD 16×2
+-  Avertissement après 5 erreurs consécutives
+-  Possibilité de définir une nouvelle combinaison par appui long sur le bouton
 
 ---
 
@@ -74,8 +74,8 @@ Le système donne un retour visuel (LEDs + écran LCD) et sonore (buzzer) à cha
 | Composant | Référence | Quantité |
 |-----------|-----------|----------|
 | Carte microcontrôleur | Raspberry Pi Pico H | 1× |
-| Écran LCD 16×2 ⭐ *(nouveau)* | COM-LCD16X2 | 1× |
-| Buzzer passif ⭐ *(nouveau)* | SE044 | 1× |
+| Écran LCD 16×2 | COM-LCD16X2 | 1× |
+| Buzzer passif | SE044 | 1× |
 | Potentiomètre | Piher PT15LV | 4× |
 | LED verte | Kingbright L-53G3C | 3× |
 | LED rouge | Kingbright L-53SRD | 3× |
